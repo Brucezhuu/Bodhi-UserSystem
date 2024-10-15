@@ -1,0 +1,78 @@
+# MacOS系统生成的文件
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# MacOS文件的特殊属性
+*.swp
+._*
+
+# MacOS生成的文件预览图标
+Thumbs.db
+Desktop.ini
+
+# Go相关的文件和目录
+# 编译后的二进制文件
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# 依赖包（如果你使用 Go modules, 你不需要忽略vendor/）
+vendor/
+
+# Go的缓存和临时文件
+*.log
+*.out
+
+# Go modules
+/go/pkg/mod/*
+/go/bin/*
+
+# Go test coverage files
+*.coverprofile
+*.cov
+*.out
+
+# 如果使用的编辑器生成特定文件，比如 VS Code、JetBrains、Sublime
+# VS Code
+.vscode/
+.vscode/*
+
+# JetBrains IDEs (GoLand, IntelliJ IDEA, etc.)
+.idea/
+*.iml
+
+# Sublime Text
+*.sublime*
+
+# 如果使用 Docker
+docker-compose.override.yml
+Dockerfile
+.dockerignore
+
+# 如果使用 Node.js 或其他前端依赖
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# 本地环境变量文件，如 dotenv
+.env
+
+# 如果使用数据库文件
+*.db
+*.sqlite3
+
+# Coverage 文件
+coverage.out
+
+# 可忽略的锁文件（Go modules通常不需要忽略go.sum文件）
+# go.sum
+
+# 如果使用 Twilio 或其他第三方库的配置文件
+twilio-debug.log
+
+# Go工具生成的临时文件
+*.test
