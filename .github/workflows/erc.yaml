@@ -28,6 +28,6 @@ jobs:
           REPOSITORY: bodhi-user-system
           IMAGE_TAG: 0.0.${{ github.run_number }}
         run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f Dockerfile ../
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f Dockerfile .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
       
