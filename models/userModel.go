@@ -7,9 +7,9 @@ import (
 
 type User struct {
 	gorm.Model
+	ID       uint   `json:"id"`
 	Username string `gorm:"unique" json:"username"`
 	Password string `json:"password"`
-	Role     string `json:"role"` // 添加角色字段
 }
 
 // Hash密码

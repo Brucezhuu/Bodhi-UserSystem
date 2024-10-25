@@ -47,6 +47,7 @@ func Login(c *gin.Context) {
 	var input models.User
 	var user models.User
 
+	// 解析请求体中的 JSON
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -68,7 +69,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// 创建JWT
+	// 创建 JWT
 	expirationTime := time.Now().Add(1 * time.Hour)
 	claims := &Claims{
 		Username: user.Username,
@@ -83,7 +84,11 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": tokenString})
+	// 返回包含 token 和 uid 的 JSON 响应
+	c.JSON(http.StatusOK, gin.H{
+		"token": tokenString,
+		"uid":   user.ID, // 返回数据库中的主键 id
+	})
 }
 
 // 鉴权中间件

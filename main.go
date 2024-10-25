@@ -4,8 +4,10 @@ import (
 	"UserSystem/models"
 	"UserSystem/routes"
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"log"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -43,14 +45,25 @@ func main() {
 
 	// 初始化Gin路由
 	r := gin.Default()
-	routes.AuthRoutes(r)
 
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:8081"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
+	routes.AuthRoutes(r)
 	// 获取端口号，默认为8080
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "8082"
 	}
+	//port := "8082"
 
 	// 启动服务器
 	r.Run(fmt.Sprintf(":%s", port))
+	//r.Run(":8080")
 }
