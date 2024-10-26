@@ -32,7 +32,7 @@ COPY --from=builder /app/app .
 COPY --from=builder /app/.env .
 
 # 暴露服务端口
-EXPOSE 8080 5432
+EXPOSE 8080 5433
 
 # 运行Go应用
 CMD ["./app"]
