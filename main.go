@@ -27,7 +27,7 @@ func init() {
 func main() {
 	// 从环境变量中获取数据库连接字符串
 	dsn := os.Getenv("DATABASE_URL")
-
+	//front := os.Getenv("FRONT_URL")
 	if dsn == "" {
 		// 如果没有环境变量，使用默认的PostgreSQL连接字符串
 		dsn = "host=localhost user=bruce password='12345' dbname=usersystem port=5432 sslmode=disable"
@@ -47,7 +47,7 @@ func main() {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:8081"},
+		AllowOrigins:     []string{"http://localhost:8081", "http://af3a3786a38fe426c824d75ac35c9920-2006375438.ap-southeast-1.elb.amazonaws.com:8087"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
