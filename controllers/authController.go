@@ -91,6 +91,12 @@ func Login(c *gin.Context) {
 	})
 }
 
+func Health(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"status": "ok"
+	})
+}
+
 // 鉴权中间件
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
