@@ -1,6 +1,7 @@
 package main
 
 import (
+	"UserSystem/config"
 	"UserSystem/models"
 	"UserSystem/routes"
 	"fmt"
@@ -25,6 +26,7 @@ func init() {
 }
 
 func main() {
+	config.InitializeRedisConfig()
 	// 从环境变量中获取数据库连接字符串
 	dsn := os.Getenv("DATABASE_URL")
 	//front := os.Getenv("FRONT_URL")

@@ -1,8 +1,11 @@
 package controllers
 
 import (
+	"UserSystem/cache"
 	"UserSystem/models"
+	"context"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"strings"
 	"time"
@@ -13,6 +16,7 @@ import (
 )
 
 var jwtKey = []byte("secret_key")
+var ctx = context.Background()
 
 // JWT结构体
 type Claims struct {
@@ -73,7 +77,14 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
+	loginAttemptsKey := fmt.Sprintf("login_attempts:%s", user.Username)
 
+	// 获取用户的登录尝试次数
+	attempts, _ := cache.RedisClient.Get(ctx, loginAttemptsKey).Int()
+	if attempts >= 5 {
+		c.JSON(http.StatusTooManyRequests, gin.H{"error": "Too many login attempts. Please try again later."})
+		return
+	}
 	// 创建 JWT
 	expirationTime := time.Now().Add(1 * time.Hour)
 	claims := &Claims{
@@ -89,11 +100,19 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	cache.RedisClient.Del(ctx, loginAttemptsKey)
 	// 返回包含 token 和 uid 的 JSON 响应
 	c.JSON(http.StatusOK, gin.H{
 		"token": tokenString,
 		"uid":   user.ID, // 返回数据库中的主键 id
 	})
+}
+
+// 在登录失败时增加尝试次数
+func incrementLoginAttempts(username string) {
+	loginAttemptsKey := fmt.Sprintf("login_attempts:%s", username)
+	cache.RedisClient.Incr(ctx, loginAttemptsKey)
+	cache.RedisClient.Expire(ctx, loginAttemptsKey, time.Minute)
 }
 
 func Health(c *gin.Context) {
@@ -139,4 +158,28 @@ func AuthMiddleware() gin.HandlerFunc {
 		c.Set("username", claims.Username)
 		c.Next()
 	}
+}
+
+// generateOTP 生成一个6位随机数字验证码
+func generateOTP() string {
+	rand.Seed(time.Now().UnixNano())
+	otp := rand.Intn(1000000)       // 生成0到999999的随机数
+	return fmt.Sprintf("%06d", otp) // 格式化为6位数字字符串，不足位数时前面补0
+}
+
+func GenerateMFA(userID int) string {
+	otp := generateOTP() // 假设有个生成 OTP 的函数
+	otpKey := fmt.Sprintf("mfa:%d", userID)
+	cache.RedisClient.Set(ctx, otpKey, otp, 5*time.Minute) // 设置 5 分钟有效期
+	return otp
+}
+
+func ValidateMFA(userID int, userOTP string) bool {
+	otpKey := fmt.Sprintf("mfa:%d", userID)
+	storedOTP, err := cache.RedisClient.Get(ctx, otpKey).Result()
+	if err != nil || storedOTP != userOTP {
+		return false
+	}
+	cache.RedisClient.Del(ctx, otpKey) // 验证成功后删除 OTP
+	return true
 }
