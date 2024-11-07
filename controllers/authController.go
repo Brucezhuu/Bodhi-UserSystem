@@ -4,6 +4,7 @@ import (
 	"UserSystem/models"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -35,6 +36,10 @@ func Register(c *gin.Context) {
 
 	// 创建用户
 	if result := models.DB.Create(&input); result.Error != nil {
+		if strings.Contains(result.Error.Error(), "UNIQUE constraint failed") {
+			c.JSON(http.StatusConflict, gin.H{"error": "Username already exists"})
+			return
+		}
 		c.JSON(http.StatusBadRequest, gin.H{"error": result.Error.Error()})
 		return
 	}
