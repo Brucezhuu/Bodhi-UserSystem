@@ -22,6 +22,12 @@ func (u *User) HashPassword(password string) error {
 	return nil
 }
 
+// HashPassword 用于哈希用户密码
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(bytes), err
+}
+
 // 验证密码
 func (u *User) CheckPassword(providedPassword string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(providedPassword))
